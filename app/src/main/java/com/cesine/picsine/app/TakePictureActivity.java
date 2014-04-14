@@ -1,28 +1,25 @@
 package com.cesine.picsine.app;
 
 import android.app.Activity;
+import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ImageView;
 import android.view.View;
-import android.content.Intent;
-import android.provider.MediaStore;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import java.io.ByteArrayOutputStream;
 
 public class TakePictureActivity extends Activity {
 
     private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 1888;
-    ImageView imageView;
+    FaceImageView imageView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_take_picture);
 
-        imageView = (ImageView) findViewById(R.id.imageView);
+        imageView = (FaceImageView) findViewById(R.id.imageView);
     }
 
 
@@ -58,17 +55,20 @@ public class TakePictureActivity extends Activity {
             if (resultCode == Activity.RESULT_OK) {
 
                 Bitmap bmp = (Bitmap) data.getExtras().get("data");
-                ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                imageView.setImage(bmp);
+                imageView.detectFaces();
 
-                bmp.compress(Bitmap.CompressFormat.PNG, 100, stream);
-                byte[] byteArray = stream.toByteArray();
-
-                // Convert ByteArray to Bitmap::
-
-                Bitmap bitmap = BitmapFactory.decodeByteArray(byteArray, 0,
-                        byteArray.length);
-
-                imageView.setImageBitmap(bitmap);
+//                ByteArrayOutputStream stream = new ByteArrayOutputStream();
+//
+//                bmp.compress(Bitmap.CompressFormat.PNG, 100, stream);
+//                byte[] byteArray = stream.toByteArray();
+//
+//                // Convert ByteArray to Bitmap::
+//
+//                Bitmap bitmap = BitmapFactory.decodeByteArray(byteArray, 0,
+//                        byteArray.length);
+//
+//                imageView.setImageBitmap(bitmap);
 
             }
         }

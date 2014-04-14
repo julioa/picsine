@@ -19,8 +19,13 @@
         <activity
             android:name="com.cesine.picsine.app.TakePictureActivity"
             android:label="@string/title_activity_take_picture" >
+        </activity>
+        <activity
+            android:name="com.mycompany.myapp.ListActivity"
+            android:label="@string/title_activity_list" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

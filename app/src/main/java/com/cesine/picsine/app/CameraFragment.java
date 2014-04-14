@@ -3,6 +3,7 @@ package com.cesine.picsine.app;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.Fragment;
+import android.content.pm.PackageManager;
 import android.hardware.Camera;
 import android.hardware.Camera.CameraInfo;
 import android.net.Uri;
@@ -49,6 +50,7 @@ public class CameraFragment extends Fragment {
         fragment.setArguments(args);
         return fragment;
     }
+
     public CameraFragment() {
         // Required empty public constructor
     }
@@ -61,22 +63,25 @@ public class CameraFragment extends Fragment {
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
 
+        if (this.getActivity().getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
 
-        // Find the total number of cameras available
-        mNumberOfCameras = Camera.getNumberOfCameras();
+            // Find the total number of cameras available
+            mNumberOfCameras = Camera.getNumberOfCameras();
 
-        // Find the ID of the rear-facing ("default") camera
-        CameraInfo cameraInfo = new CameraInfo();
-        for (int i = 0; i < mNumberOfCameras; i++) {
-            Camera.getCameraInfo(i, cameraInfo);
-            if (cameraInfo.facing == CameraInfo.CAMERA_FACING_BACK) {
-                mCurrentCamera = mDefaultCameraId = i;
+            // Find the ID of the rear-facing ("default") camera
+            CameraInfo cameraInfo = new CameraInfo();
+
+            for (int i = 0; i < mNumberOfCameras; i++) {
+                Camera.getCameraInfo(i, cameraInfo);
+                if (cameraInfo.facing == CameraInfo.CAMERA_FACING_BACK) {
+                    mCurrentCamera = mDefaultCameraId = i;
+                }
             }
-        }
-        setHasOptionsMenu(mNumberOfCameras > 1);
+            setHasOptionsMenu(mNumberOfCameras > 1);
 
-        // Create a container that will hold a SurfaceView for camera previews
-        mPreview = new Preview(this.getActivity());
+            // Create a container that will hold a SurfaceView for camera previews
+            mPreview = new Preview(this.getActivity());
+        }
     }
 
     @Override
@@ -112,7 +117,11 @@ public class CameraFragment extends Fragment {
         // Use mCurrentCamera to select the camera desired to safely restore
         // the fragment after the camera has been changed
         try {
-        mCamera = Camera.open(mCurrentCamera);
+            if (mNumberOfCameras < 0) {
+                mCamera = Camera.open(mCurrentCamera);
+            } else {
+                return;
+            }
         } catch (Exception e) {
             mPreview = null;
             return;
@@ -133,7 +142,6 @@ public class CameraFragment extends Fragment {
             mCamera = null;
         }
     }
-
 
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -165,7 +173,7 @@ public class CameraFragment extends Fragment {
      * fragment to allow an interaction in this fragment to be communicated
      * to the activity and potentially other fragments contained in that
      * activity.
-     * <p>
+     * <p/>
      * See the Android Training lesson <a href=
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.
